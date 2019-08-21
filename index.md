@@ -18,11 +18,11 @@
 
   A simple directive just consits of a name and a parameter separated by space.
       
-  Examples: `root /www/sites` `gzip on;`
+  Examples: `root /www/sites;` `gzip on;`
       
   **Blocks**
 
-  On the other hand blocks consists of several simple directives surronded by a curly braces.
+  On the other hand, blocks consists of several simple directives surrounded by curly braces.
       
   Example:
   ```
@@ -32,5 +32,44 @@
   ```
 
 ### Context
+- Context can be treated as a scope in programming language like ruby.
+- Context can be better understood by looking at the nginx.conf
+
+```
+# main context
+user  nginx; # directive in main context
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events { # events context
+  worker_connections  1024; # directive in events context
+}
+
+http { # http context
+  include       /etc/nginx/mime.types; # directive in http context
+  access_log  /var/log/nginx/access.log  main;
+
+  server {          # server context
+    listen 80;      # directive in server context
+
+    location / { # location context
+      root /var/www/html; # directive in location context
+    }
+  }
+}
+```
+
+- Main context sets up directives globally for nginx. Can't override the directives set in global context and are not inherited into the other contexts.
+
+- http and events reside under main context, server resides in http context and location resides in server context.
+```
+  main context
+    events context
+    http context
+      server context
+        location context
+```
 
 ### Variables
