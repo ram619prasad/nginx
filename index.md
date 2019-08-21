@@ -3,20 +3,30 @@
 1. [What is nginx?](https://www.nginx.com/resources/glossary/nginx/)
 2. Basics
     * [Directives](#directives)
-    * [Blocks](#blocks)
     * [Context](#context)
     * [Variables](#variables)
 
 ### Directives
 
-- A directive in nginx consists of a name and parameters.
+- A directive in nginx consists of a name and parameters separated by a space.
 - A directive should always end with a semicolon(;).
+- Directives in nginx are of 2 types
+    
+    **Simple Directives**
 
-Examples:
-`listen 80;`
-`include mime.types;`
-
-### Blocks
+    A simple directive just consits of a name and a parameter separated by space.
+        
+    Examples: `root /www/sites` `gzip on;`
+        
+    **Blocks**
+    On the other hand blocks consists of several simple directives surronded by a curly braces.
+        
+    Example:
+    ```
+        location / {
+            root /www/sites
+        }
+    ```
 
 ### Context
 
