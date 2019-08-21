@@ -1,6 +1,7 @@
 ## Hi, Welcome to my nginx github page.
 
 1. [What is nginx?](https://www.nginx.com/resources/glossary/nginx/)
+
   The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 2. Basics
   * [Directives](#directives)
