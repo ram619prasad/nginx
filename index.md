@@ -9,6 +9,12 @@
 
 ### Directives
 
+A directive in nginx is nothing but a name and parameters. A directive should always end with a semicolon(;).
+
+Examples:
+`listen 80;`
+`include mime.types;`
+
 ### Blocks
 
 ### Context
