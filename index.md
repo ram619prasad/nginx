@@ -5,9 +5,11 @@
   * [Directives](#directives)
   * [Context](#context)
   * [Variables](#variables)
-  * [Http Directive](#http_directive)
-  * [Server Directive](#server_directive)
-  * [Location Directive](#location_directive)
+  * [Http Directive](#http-directive)
+  * [Server Directive](#server-directive)
+  * [Location Directive](#location-directive)
+  * [Redirect](#redirect)
+  * [Rewrite](#rewrite)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -209,3 +211,7 @@ location ~* /*.(png|ico|gif|jpg|jpeg|css|js)$ {
 Priority order:
 
 `Exact(=)` > `Preferential Prefix(^~)` > `RE match(~*, ~)` > `Prefix` 
+
+### Redirect
+
+### Rewrite
