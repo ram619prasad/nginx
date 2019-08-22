@@ -154,7 +154,7 @@ Modifiers:
   =    - Exact match
   ~    - Case Sensitive regular expression match
   ~*   - Case insensitive regular expression match
-  ^~   - Non-regular expression match
+  ^~   - Preferential Prefix match(prevents any regular expression matching.)
   ```
 
 Examples:
@@ -162,24 +162,24 @@ Examples:
 ```
 location /temp {
    # Matches everything that starts with /temp and continues searching untill more specific block is found else it will use this.
-   # http://localhost:80/temp :white_check_mark:
-   # http://localhost:80/temp/1 :white_check_mark:
-   # http://localhost:80/temp/1/rand :white_check_mark:
+   # http://localhost:80/temp ✅
+   # http://localhost:80/temp/1 ✅
+   # http://localhost:80/temp/1/rand ✅
 }
 ```
 
 ```
 location ^~ /temp {
    # Matches everything that starts with /temp and then stop searching.
-   # http://localhost:80/temp :white_check_mark:
-   # http://localhost:80/temp/1 :white_check_mark:
+   # http://localhost:80/temp ✅
+   # http://localhost:80/temp/1 ✅
 }
 ```
 
 ```
 location = /ramp {
   # Only matches the uri's /ramp
-  # http://localhost:80/ramp :white_check_mark:
+  # http://localhost:80/ramp ✅
   # http://localhost:80/ramp/1 :x:
 }
 ```
@@ -187,21 +187,25 @@ location = /ramp {
 ```
 location ~ /*.(png|ico|gif|jpg|jpeg|css|js)$ {
   # Matches all the uri's which end with .png or .ico and etc with case matching as stated.
-  # http://localhost:80/1.png :white_check_mark:
-  # http://localhost:80/1.ico :white_check_mark:
-  # http://localhost:80/1.gif :white_check_mark:
-  # http://localhost:80/1.jpg :white_check_mark:
-  # http://localhost:80/1.jpeg :white_check_mark:
-  # http://localhost:80/1.css :white_check_mark:
-  # http://localhost:80/1.js :white_check_mark:
-  # http://localhost:80/1.PNG :x:
+  # http://localhost:80/1.png ✅
+  # http://localhost:80/1.ico ✅
+  # http://localhost:80/1.gif ✅
+  # http://localhost:80/1.jpg ✅
+  # http://localhost:80/1.jpeg ✅
+  # http://localhost:80/1.css ✅
+  # http://localhost:80/1.js ✅
+  # http://localhost:80/1.PNG ❌
 }
 ```
 
 ```
 location ~* /*.(png|ico|gif|jpg|jpeg|css|js)$ {
   # Case insensitive match of the above.
-  # http://localhost:80/1.png :white_check_mark:
-  # http://localhost:80/1.PNG :white_check_mark:
+  # http://localhost:80/1.png ✅
+  # http://localhost:80/1.PNG ✅
 }
 ```
+
+Priority order:
+
+`Exact(=)` > `Preferential Prefix(^~)` > `RE match(~*, ~)` > `Prefix` 
