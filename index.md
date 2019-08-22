@@ -32,7 +32,7 @@
   ```
 
 ### Context
-- Context can be treated as a scope in programming language like ruby.
+- Context can be treated as a scope in a programming language like ruby.
 - Context can be better understood by looking at the nginx.conf
 
 ```
@@ -73,3 +73,50 @@ http { # http context
 ```
 
 ### Variables
+
+Variables in nginx, like in any programming language can be used for storing a value which can be retrieved at a later point of time.
+
+```
+Syntax:	set $variable value;
+Context:	server, location, if
+```
+
+Example: `set $_name 'www.ramp.com'`
+
+Replace your nginx.conf with the following, and reload the nginx(`nginx -s reload`)
+```
+events {}
+
+http {
+    server {
+        listen 80;
+        set $h_name 'www.ramp.com';
+
+        location / {
+            return 200 $h_name;
+        }
+
+        location /get_url {
+            return 200 "https://$h_name/image_uri";
+        }
+    }
+}
+``` 
+
+We can also interpolate,
+```
+events {}
+
+http {
+    server {
+        listen 80;
+        set $h_name 'www.ramp.com';
+
+        location / {
+            return 200 $h_name;
+        }
+    }
+}
+``` 
+
+**Do not forgot to reload the nginx server after changing the configuration every time**
