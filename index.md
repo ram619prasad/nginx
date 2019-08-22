@@ -147,3 +147,61 @@ location optional_modifier location_match {
     ---
 }
 ```
+
+Modifiers:
+  ```
+  none - Prefix match
+  =    - Exact match
+  ~    - Case Sensitive regular expression match
+  ~*   - Case insensitive regular expression match
+  ^~   - Non-regular expression match
+  ```
+
+Examples:
+
+```
+location /temp {
+   # Matches everything that starts with /temp and continues searching untill more specific block is found else it will use this.
+   # http://localhost:80/temp :white_check_mark:
+   # http://localhost:80/temp/1 :white_check_mark:
+   # http://localhost:80/temp/1/rand :white_check_mark:
+}
+```
+
+```
+location ^~ /temp {
+   # Matches everything that starts with /temp and then stop searching.
+   # http://localhost:80/temp :white_check_mark:
+   # http://localhost:80/temp/1 :white_check_mark:
+}
+```
+
+```
+location = /ramp {
+  # Only matches the uri's /ramp
+  # http://localhost:80/ramp :white_check_mark:
+  # http://localhost:80/ramp/1 :x:
+}
+```
+
+```
+location ~ /*.(png|ico|gif|jpg|jpeg|css|js)$ {
+  # Matches all the uri's which end with .png or .ico and etc with case matching as stated.
+  # http://localhost:80/1.png :white_check_mark:
+  # http://localhost:80/1.ico :white_check_mark:
+  # http://localhost:80/1.gif :white_check_mark:
+  # http://localhost:80/1.jpg :white_check_mark:
+  # http://localhost:80/1.jpeg :white_check_mark:
+  # http://localhost:80/1.css :white_check_mark:
+  # http://localhost:80/1.js :white_check_mark:
+  # http://localhost:80/1.PNG :x:
+}
+```
+
+```
+location ~* /*.(png|ico|gif|jpg|jpeg|css|js)$ {
+  # Case insensitive match of the above.
+  # http://localhost:80/1.png :white_check_mark:
+  # http://localhost:80/1.PNG :white_check_mark:
+}
+```
