@@ -100,6 +100,7 @@ http {
 
 
 - We can also interpolate,
+
 ```
 events {}
 
@@ -122,3 +123,6 @@ http {
 - Open your favourite browser and try hit http://localhost:80/ and http://localhost:80/image_url
 
 > Do not forgot to reload the nginx server after changing the configuration every time.
+
+- Nginx also comes with a lot of built in variables which can be used directly [Nginx Variables](http://nginx.org/en/docs/varindex.html)
+
