@@ -74,16 +74,32 @@ http { # http context
 
 ### Variables
 
-Variables in nginx, like in any programming language can be used for storing a value which can be retrieved at a later point of time.
-
+- Variables in nginx, like in any programming language can be used for storing a value which can be retrieved at a later point of time.
 ```
 Syntax:	set $variable value;
-Context:	server, location, if
+Context: server, location, if
 ```
 
-Example: `set $_name 'www.ramp.com'`
 
-Replace your nginx.conf with the following, and reload the nginx(`nginx -s reload`)
+- Replace your nginx.conf with the following, and reload the nginx(`nginx -s reload`).
+
+```
+events {}
+
+http {
+    server {
+        listen 80;
+        set $h_name 'www.ramp.com';
+
+        location / {
+            return 200 $h_name;
+        }
+    }
+}
+``` 
+
+
+- We can also interpolate,
 ```
 events {}
 
@@ -96,27 +112,13 @@ http {
             return 200 $h_name;
         }
 
-        location /get_url {
+        location /image_url {
             return 200 "https://$h_name/image_uri";
         }
     }
 }
-``` 
-
-We can also interpolate,
 ```
-events {}
 
-http {
-    server {
-        listen 80;
-        set $h_name 'www.ramp.com';
+- Open your favourite browser and try hit http://localhost:80/ and http://localhost:80/image_url
 
-        location / {
-            return 200 $h_name;
-        }
-    }
-}
-``` 
-
-**Do not forgot to reload the nginx server after changing the configuration every time**
+> Do not forgot to reload the nginx server after changing the configuration every time.
