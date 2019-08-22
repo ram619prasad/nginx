@@ -5,6 +5,9 @@
   * [Directives](#directives)
   * [Context](#context)
   * [Variables](#variables)
+  * [Http Directive](#http_directive)
+  * [Server Directive](#server_directive)
+  * [Location Directive](#location_directive)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -126,3 +129,21 @@ http {
 
 - Nginx also comes with a lot of built in variables which can be used directly [Nginx Variables](http://nginx.org/en/docs/varindex.html)
 
+### Http Directive
+
+### Server Directive
+
+### Location Directive
+- Location directive/block resides inside the `Server Directive`.
+- Decides how to process the different uri's.
+- When a request for resource comes to the nginx server, the uri is matched with one of the location block and is served accordingly.
+
+Syntax:
+
+```
+location optional_modifier location_match {
+    ----------
+    -------
+    ---
+}
+```
