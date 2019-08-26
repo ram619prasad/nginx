@@ -10,6 +10,7 @@
   * [Location Directive](#location-directive)
   * [Return](#return)
   * [Rewrite](#rewrite)
+  * [Try Files](#try-files)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -247,7 +248,7 @@ Flags:
   permanent - permanent redirect (301)
   rewrite   - temperory redirects(302)
   break     - stops processing of rewrite.
-  last      - stop search of rewritten url in current block and use the changed uri for further lookup(rewrites)
+  last      - stop search of rewritten url in current block and use the changed uri for further lookup/re-evaluation(rewrites)
 
 Examples:
 
@@ -312,3 +313,33 @@ nginx.conf
 error_log /var/log/nginx/error.log notice;
 rewrite_log on;
 ```
+
+### Try Files
+
+- Try can be better understood with an example
+
+```
+server {
+  listen 80;
+  server_name localhost;
+  root /www/sites/;
+
+  location / {
+    try_files $uri /instructions.txt /temp @404; # No re-evaluation happens after named location
+  }
+
+  location /temp {
+    return 200 "Found in temp folder";
+  }
+
+  location @404 {
+    return 404 "Not found";
+  }
+}
+```
+
+http://localhost:80/index.html
+  - If index.html is available in /www/sites/, it will be served,
+  - If index.html is not available, then instructions.txt is served if available
+  - If instructions.txt is not available, then the same is searched in /www/sites/temp/
+  - If /www/sites/temp/instructions.txt is not available, then the request will be matched with named location 404(name to a location can be assigned using @)
