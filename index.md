@@ -248,6 +248,8 @@ server {
 }
 ```
 
+[More on loggin](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/)
+
 ### Return
 
 - A return can be used to perfrom things like permantent redirect, temperory redirect, redirect all/specific traffic to https and etc.
