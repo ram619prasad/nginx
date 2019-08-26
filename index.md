@@ -3,6 +3,9 @@
 1. [What is nginx?](https://www.nginx.com/resources/glossary/nginx/)
 2. Basics
   * [Directives](#directives)
+  * [Array Directives](#array-directives)
+  * [Standard Directives](#standard-directives)
+  * [Action Directives](#action-directives)
   * [Context](#context)
   * [Variables](#variables)
   * [Http Directive](#http-directive)
@@ -37,6 +40,48 @@
     root /www/sites;
   }
   ```
+
+### Array Directives
+- can be specified multiple times.
+- inherited by default in child contexts.
+- can be over-ridden in child context.
+
+Example:
+
+```
+nginx.conf
+----------
+
+access_log /var/log/nginx/access.log;
+access_log /var/log/nginx/access.custom.log <custom_format>;
+
+http {
+  server {
+    location /image {
+      access_log /var/log/nginx/access.image.log; // over-rides the global access_log location for /image path
+    }
+  }
+}
+```
+
+### Standard Directives
+- can be declared only once. If declared again, the second declaration will override the first one.
+- will be inherited in all child contexts.
+
+Example:
+
+```
+server {
+  root /www/sites;
+
+  location /images {
+    root /www/images; # Here all the /images/xxx will be served from /www/images folder
+  }
+}
+```
+
+### Action Directives
+- redirect and rewrite are examples of action directives. These are described in the later sections.
 
 ### Context
 - Context can be treated as a scope in a programming language like ruby.
