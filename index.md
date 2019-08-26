@@ -8,6 +8,7 @@
   * [Http Directive](#http-directive)
   * [Server Directive](#server-directive)
   * [Location Directive](#location-directive)
+  * [Logging](#logging)
   * [Return](#return)
   * [Rewrite](#rewrite)
   * [Try Files](#try-files)
@@ -211,7 +212,41 @@ location ~* /*.(png|ico|gif|jpg|jpeg|css|js)$ {
 
 Priority order:
 
-`Exact(=)` > `Preferential Prefix(^~)` > `RE match(~*, ~)` > `Prefix` 
+`Exact(=)` > `Preferential Prefix(^~)` > `RE match(~*, ~)` > `Prefix`
+
+### Logging
+
+- nginx uses 2 log files
+   i. error.log - for logging the resouces which are not found
+   ii. access.log - for logging all the requests to the made to the server.
+
+- logging is enabled by default.
+
+
+Example:
+```
+server {
+  listen 80;
+  server_name www.ramp.com;
+  root /www/sites;
+
+  error_log /var/log/nginx/error.log;
+  access_log /var/log/nginx/access.log;
+
+  listen /images {
+    access_log /var/log/nginx/images_access.log; # we can specifiy different files for different locations.
+  }
+
+  listen /docs {
+    access_log /var/log/nginx/docs_access.log;
+    access_log /var/log/nginx/access.log      # logs all /docs/xxx requests to both docs_access and access.log files.
+  }
+
+  listen /temp {
+    access_log off; # disables the logs for all /temp/xxx requests
+  }
+}
+```
 
 ### Return
 
