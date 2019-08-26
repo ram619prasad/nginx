@@ -8,7 +8,7 @@
   * [Http Directive](#http-directive)
   * [Server Directive](#server-directive)
   * [Location Directive](#location-directive)
-  * [Redirect](#redirect)
+  * [Return](#return)
   * [Rewrite](#rewrite)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
@@ -182,7 +182,7 @@ location ^~ /temp {
 location = /ramp {
   # Only matches the uri's /ramp
   # http://localhost:80/ramp ✅
-  # http://localhost:80/ramp/1 :x:
+  # http://localhost:80/ramp/1 ❌
 }
 ```
 
@@ -212,6 +212,103 @@ Priority order:
 
 `Exact(=)` > `Preferential Prefix(^~)` > `RE match(~*, ~)` > `Prefix` 
 
-### Redirect
+### Return
+
+- A return can be used to perfrom things like permantent redirect, temperory redirect, redirect all/specific traffic to https and etc.
+
+Syntax: `return <status_code> <text>/<url>`
+
+Examples
+
+```
+server {
+  listen 80 default_server;
+  server_name www.ramp.com;
+  return 301 https://$host$request_uri; # Redirects all http traffic to https
+}
+```
+
+```
+location / {
+  return 200 "ok"; # Returns a 200 status code with a plain-text ok.
+  return 302 http://example.com/articles # temperory redirects
+  return 301 http://example.com/articles # permanent redirects
+}
+```
 
 ### Rewrite
+
+- Like return, rewrite is also used for temperory/permanent redirects, redirecting a  user from non-www to www version and etc.
+- `redirect` directive can be used only in **server**, **location** and **if** directives
+
+Syntax: `rewrite regex URL [optional_flag]`
+
+Flags:
+  permanent - permanent redirect (301)
+  rewrite   - temperory redirects(302)
+  break     - stops processing of rewrite.
+  last      - stop search of rewritten url in current block and use the changed uri for further lookup(rewrites)
+
+Examples:
+
+```
+server {
+  # Permanent redirect to new URL
+  server_name olddomain.com;
+  rewrite ^/(.*)$ https://newdomain.com/$1 permanent;
+}
+
+server {
+  # temperory redirect to new URL
+  server_name olddomain.com;
+  rewrite ^/(.*)$ https://newdomain.com/$1 redirect;
+}
+```
+
+```
+location /data/ {
+    rewrite ^(/data/.*)/geek/(\w+)\.?.*$ $1/linux/$2.html break;
+    return  403;
+}
+
+$1 matches all the string that begin with /data/
+$2 is any word that comes after /geek
+*$ is the extension of the request uri
+
+url/data/distro/geek/test.php -> url/data/distro/linux/test.html
+```
+
+```
+location /music/ {
+  rewrite ^/music/(.*)$ /music/stream?file_name=$1.mp3;
+
+  /music/song1 -> /music/stream?file_name=song1.mp3
+  /music/song2 -> /music/stream?file_name=song2.mp3
+}
+```
+
+```
+if ($scheme = "http") {
+  rewrite ^ https://www.ramp.com$uri permanent;
+}
+```
+
+- break vs last flags
+
+```
+location /data/ {
+  rewrite ^(/data/.*)/geek/(\w+)\.?.*$ $1/linux/$2.html break;
+  return  403;
+}
+```
+
+If we had `last` instead of `break` in the above rewrite, nginx will keep processing the same request for max 10 times with finally returning 500 status code.
+
+- If we want all the redwrites to be logged, just ensure that you have an `error_log` specified with `rewrite_log` set to on
+```
+nginx.conf
+----------
+
+error_log /var/log/nginx/error.log notice;
+rewrite_log on;
+```
