@@ -448,5 +448,27 @@ http://localhost:80/index.html
 
 `worker_connections 1024;`
 
-- The maximum number of clients served by nginx can be obtained as
+- The maximum number of concurrent connections(clients) served by nginx can be obtained as
   `clients = worker_processes * worker_connections`
+
+```
+nginx.conf
+----------
+
+worker_processes 1;
+pid /var/run/nginx.pid;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  server {
+    location / {
+
+    }
+  }
+}
+
+This configuration can serve max 1024 clients concurrently.
+```
