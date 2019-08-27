@@ -15,6 +15,8 @@
   * [Return](#return)
   * [Rewrite](#rewrite)
   * [Try Files](#try-files)
+  * [Worker Processes](#worker-processes)
+  * [Worker Connections](#worker-connections)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -45,6 +47,7 @@
 - can be specified multiple times.
 - inherited by default in child contexts.
 - can be over-ridden in child context.
+- access_logs, fastcgi_param can be best examples of array directives.
 
 Example:
 
@@ -388,6 +391,7 @@ location /data/ {
 If we had `last` instead of `break` in the above rewrite, nginx will keep processing the same request for max 10 times with finally returning 500 status code.
 
 - If we want all the redwrites to be logged, just ensure that you have an `error_log` specified with `rewrite_log` set to on
+
 ```
 nginx.conf
 ----------
@@ -425,3 +429,24 @@ http://localhost:80/index.html
   - If index.html is not available, then instructions.txt is served if available
   - If instructions.txt is not available, then the same is searched in /www/sites/temp/
   - If /www/sites/temp/instructions.txt is not available, then the request will be matched with named location 404(name to a location can be assigned using @)
+
+### Worker Processes
+
+- A worker process is the one which do the actual processing of the requests.
+- For better performance, the number of worker processes should be equal to the number of cores of CPU.
+- To get the number of cores of CPU of server, use `nproc` or `lscpu`
+
+`worker_processes = No of cores of CPU`
+
+- To have the best performance, set it to auto `worker_processes auto;`
+
+### Worker Connections
+
+- No of simultaneous connections
+- No of connections each worker_processes can handle.
+- To get the value of this set it to `ulimit -n`
+
+`worker_connections 1024;`
+
+- The maximum number of clients served by nginx can be obtained as
+  `clients = worker_processes * worker_connections`
