@@ -17,6 +17,10 @@
   * [Try Files](#try-files)
   * [Worker Processes](#worker-processes)
   * [Worker Connections](#worker-connections)
+  * [Buffer](#buffer)
+  * [Timeouts](#timeouts)
+  * [Notable Directives](#notable-directives)
+  * [Dynamic Modules](#dynamic-modules)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -471,4 +475,51 @@ http {
 }
 
 This configuration can serve max 1024 clients concurrently.
+```
+
+### Buffer
+
+`client_header_buffer_size 1k;` # buffer size for reading client headers
+`client_body_buffer_size 8k;` # buffer size for reading the request
+`client_max_body_size 1m;` # maximum client request body size for POST requests
+
+
+### Timeouts
+
+`client_body_timeout 60s;` # is a period btw 2 successive read operations but not for the transmission of whole request body.
+`client_header_timeout 60s;` # If client doesn't send entire headers within this time, responds with timeout error.
+`keepalive_timeout 75s;` # Keeps the client connection alive for 75s instead of opening a new connection.
+`send_timeout 60s;` # Set only for the 2 successive write operations. If the client doesn't receive anything, then connection is closed.
+
+
+### Notable Directives
+
+`sendfile on;` # sends all the static files to the client without using buffer to improve performance.
+`tcp_nopush on;` # optimises the packets used during sendfile.
+
+### Dynamic Modules
+
+- Nginx modules end with .so extension.
+- `load_module` can be used to include the dynamic modules in nginx.conf.
+- Ensure that the modules that you want is available in /etc/nginx/modules folder.
+- Dynamic modules should be placed in the global context.
+
+```
+nginx.conf
+----------
+
+
+load_modules modules/ngx_http_image_filter_module.so;
+
+events {
+
+}
+
+http {
+  server {
+    location ^\.png$ {
+      image_filter rotate 90; # done with the help of dynamic module we just included.
+    }
+  }
+}
 ```
