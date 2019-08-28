@@ -23,6 +23,8 @@
   * [Dynamic Modules](#dynamic-modules)
   * [Adding Headers](#adding-headers)
   * [Caching](#caching)
+  * [Compression](#compression)
+3. [Proxy Caching](#proxy-caching)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -535,7 +537,7 @@ Syntax: `add_header <name> <value> [always]`
 Examples: `add_header Cache-Control public;`, `add_header Pragma public;`
 
 
-- `expires` directive can be used for implementing browser cache(asks the browser to download the resource once and use it to prevent the un-necessary requests for static files) by setting te "Cache-Control max-age=<value>" header in every response.
+- `expires` directive can be used for implementing browser cache(asks the browser to download the resource once and use it to prevent the un-necessary requests for static files).
 
 Example:
 
@@ -561,3 +563,36 @@ server {
   expires $expires;
 }
 ```
+
+### Compression
+
+- Compresses the resources on the server to reduce the size so that the it can be delivered faster.
+- `gzip` is the directive used for compressing the resources.
+- Always good to add the gzip in http context so that they can be over-ridden in any server context.
+
+Example:
+
+```
+nginx.conf
+---------
+
+events {}
+
+http {
+  gzip on;                      # Enables gzip on server
+  gzip_min_length 1024;         # No gzip for files less than 1024 bytes
+  gzip_disable "MSIE [1-9]\.";  # disable gzip for IE 1 to 9.
+  gzip_comp_level 3;            # depending on compression level, size of resouce will be reduced
+                                (more the level, less the size of file and more the resource required for gzipping)
+  gzip_types text/css text/html;# only enable gzip for the following types of files.
+
+
+  server {
+    location / {
+      add_header vary Accept-Encoding; # this is needed for the gzip to work
+    }
+  }
+}
+```
+
+### Proxy Caching
