@@ -21,6 +21,8 @@
   * [Timeouts](#timeouts)
   * [Notable Directives](#notable-directives)
   * [Dynamic Modules](#dynamic-modules)
+  * [Adding Headers](#adding-headers)
+  * [Caching](#caching)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
 
@@ -521,5 +523,41 @@ http {
       image_filter rotate 90; # done with the help of dynamic module we just included.
     }
   }
+}
+```
+
+### Adding Headers
+
+- `add_header` directive can be used to add response headers from nginx.
+
+Syntax: `add_header <name> <value> [always]`
+
+Examples: `add_header Cache-Control public;`, `add_header Pragma public;`
+
+
+- `expires` directive can be used for implementing browser cache(asks the browser to download the resource once and use it to prevent the un-necessary requests for static files) by setting te "Cache-Control max-age=<value>" header in every response.
+
+Example:
+
+```
+nginx.conf
+---------
+
+events {
+  worker_connections 1024;
+}
+
+map $sent_http_content_type $expires {
+  default                 off;    # does not add any cache control headers
+  text/html               epoch;  # no caching again, forces the browser to ask if the browser is up to date.
+  application/pdf         10d;    # sets the cache to 10days
+  text/css                max;    # “Cache-Control” to 10 years.
+  application/javascript  max;
+  ~image/                 max
+}
+
+server {
+  listen 80 default_server;
+  expires $expires;
 }
 ```
