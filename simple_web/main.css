@@ -1,0 +1,13 @@
+html {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2rem;
+  color: aquamarine;
+}
+
+p {
+  color: gray;
+}

@@ -24,6 +24,7 @@
   * [Adding Headers](#adding-headers)
   * [Caching](#caching)
   * [Compression](#compression)
+4. [HTTP2 - Server push](#http2-server-push)
 3. [Proxy Caching](#proxy-caching)
 
 > The way nginx and its modules work is determined in the configuration file. By default, the configuration file is named `nginx.conf` and placed in the directory `/usr/local/nginx/conf`, `/etc/nginx`, or `/usr/local/etc/nginx`.
@@ -595,4 +596,44 @@ http {
 }
 ```
 
-### Proxy Caching
+## HTTP2 - Server push
+- When compared with http1, http2 has a lot of advantages like compressed headers, multiplexed connections for transferring multiple resources in single connection, server push and etc
+
+[More on https2](https://kinsta.com/learn/what-is-http2/)
+
+- For implementing http2, we need the server to respond for https for which we need to generate self signed ssl certificates [SSL Certificate](https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-16-04)
+
+Example:
+
+```
+nginx.conf
+----------
+
+worker_processes auto;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  server {
+    listen 443 ssl http2;
+
+    ssl_certificate /etc/nginx/certs/server.crt;
+    ssl_certificate_key /etc/nginx/certs/server.key;
+
+    location = /index.html {
+      http2_push style.css;
+      http2_push app.js;
+      http2_push avatar.png;
+    }
+
+    location = / {
+      proxy_pass http://upstream;
+      http2_push_preload on;
+    }
+  }
+}
+```
+
+## Proxy Caching
